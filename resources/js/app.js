@@ -6,6 +6,7 @@
 
 import Vue from 'vue'
 import router from './router'
+import store from './store'
 import App from './App.vue' // HTML部分の読み込み(App.vueで指定すること)
 
 require('./bootstrap');
@@ -38,6 +39,7 @@ const app = new Vue({
 new Vue({
   el: '#app',
   router, //ルーティングの定義を読み込み
+  store, // ストア
   components: { App }, //ルートコンポーネントの使用を宣言
   template: '<App />' //ルートコンポーネントを描画する
 })
