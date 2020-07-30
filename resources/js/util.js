@@ -16,13 +16,13 @@ export function getCookieValue(searchKey) {
   // ; でsplitする。さらに、=でsplitすることで、値だけを取り出せる。
   // この取り出した値と、関数の引数として渡ってきたsearchKeyが一致するものを探している。
   document.cookie.split(';').forEach(cookie => {
-    const[key, value] = cookie.split('='); //ここで、=の前がkeyに、=の後がvalueに入るようになる。
+    const[key, value] = cookie.split('=');
     if (key === searchKey) {
       return val = value;
     }
   })
   
-  // 一致するものがなかったら、そのまま空文字として返却する。
+  //一致するものがなかったらそのまま返却する
   return val;
   
 }

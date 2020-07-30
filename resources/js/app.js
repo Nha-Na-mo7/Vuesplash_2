@@ -4,14 +4,15 @@
  * building robust, powerful web applications using Vue and Laravel.
  */
 
+import './bootstrap'
 import Vue from 'vue'
 import router from './router'
 import store from './store'
 import App from './App.vue' // HTML部分の読み込み(App.vueで指定すること)
 
-require('./bootstrap');
-
-window.Vue = require('vue');
+// require('./bootstrap');
+//
+// window.Vue = require('vue');
 
 /**
  * The following block of code may be used to automatically register your
