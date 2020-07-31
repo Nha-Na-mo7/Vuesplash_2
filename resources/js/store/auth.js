@@ -24,7 +24,20 @@ const actions = {
   async register (context, data){
     const response = await axios.post('/api/register', data)
     context.commit('setUser', response.data) //返却データを使ったステート更新
+  },
+  
+  //ログインフォームによるログイン
+  async login (context, data) {
+    const response = await axios.post('/api/login', data)
+    context.commit('setUser', response.data)
+  },
+  
+  //ログアウトの場合。ストアのuser情報をnullにしている。
+  async logout (context) {
+    const response = await axios.post('/api/logout')
+    context.commit('setUser', null)
   }
+  
 }
 
 
