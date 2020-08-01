@@ -12,7 +12,7 @@
     <div class="navbar__menu">
     
       <!-- 写真投稿ボタン -->
-      <div class="navbar__item">
+      <div v-if="isLogin" class="navbar__item">
         <button class="button">
           <i class="icon ion-md-add"></i>
           Submit a PHOTO!
@@ -20,14 +20,14 @@
       </div>
       
       <!-- ユーザーネーム -->
-      <span class="navbar__item">
-        UserName!!!
+      <span v-if="isLogin" class="navbar__item">
+        {{ username }}
       </span>
       
       <!-- ログインリンク(ログイン済みなら表示されない) -->
-      <div class="navbar__item">
+      <div v-else class="navbar__item">
         <RouterLink class="button button--link" to="/login">
-          Login / Register
+          ログイン / 会員登録
         </RouterLink>
       </div>
       
@@ -35,3 +35,16 @@
   </nav>
 
 </template>
+
+<script>
+export default {
+  computed: {
+    isLogin() {
+      return this.$store.getters['auth/check']
+    },
+    username() {
+      return this.$store.getters['auth/username']
+    }
+  }
+}
+</script>

@@ -7,7 +7,11 @@ const state = {
   user: null
 }
 
-const getters = {}
+const getters = {
+  check:  state => !! state.user, //二重否定は確実に真偽値を返却させるため。
+  username: state => state.user ? state.user.name : '' //userがnullだったとしても空文字が帰る
+}
+
 
 const mutations = {
   //ミューテーションの第1引数は必ずステートになる。
@@ -36,7 +40,15 @@ const actions = {
   async logout (context) {
     const response = await axios.post('/api/logout')
     context.commit('setUser', null)
+  },
+  
+  // ログインユーザー維持のAPI
+  async currentUser(context) {
+    const response = await axios.get('/api/user')
+    const user = response.data || null
+    context.commit('setUser', user)
   }
+  
   
 }
 

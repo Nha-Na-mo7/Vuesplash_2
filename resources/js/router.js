@@ -5,6 +5,7 @@ import VueRouter from "vue-router";
 
 import PhotoList from './pages/PhotoList.vue'
 import Login from './pages/Login.vue'
+import store from './store'
 
 // VueRouterのプラグインを使用する
 // これによって、<RouterView />コンポーネントなどを使用できるようになる。
@@ -20,7 +21,17 @@ const routes = [
   },
   {
     path: '/login',
-    component: Login
+    component: Login,
+    beforeEnter (to, from, next) {
+      //['auth/check']のゲッターでログイン状態をチェック。
+      if(store.getters['auth/check']) {
+        //next()の引数に指定したページにリダイレクトするように見える動きになる
+        next('/')
+      } else {
+        //next()引数なしだと、そのままページコンポーネントが作られる
+        next()
+      }
+    }
   }
 ]
 
