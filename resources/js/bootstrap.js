@@ -14,3 +14,8 @@ window.axios.interceptors.request.use(config => {
     
     return config
 })
+
+window.axios.interceptors.response.use(
+    response => response, //第一引数。成功時の処理"response"をそのまま返している。
+    error => error.response || error //第二引数。失敗時の処理。インターセプターにまとめた。
+)

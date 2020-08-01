@@ -21,7 +21,6 @@
   import Footer from './components/Footer.vue'
   import { INTERNAL_SERVER_ERROR } from './util'
 
-  
   export default {
     components: {
       Navbar,
@@ -45,7 +44,6 @@
         this.$store.commit('error/setCode', null)
       }
     }
-
   }
 </script>
 
