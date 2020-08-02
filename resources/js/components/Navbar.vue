@@ -12,7 +12,7 @@
     <div class="navbar__menu">
     
       <!-- 写真投稿ボタン -->
-      <div v-if="isLogin" class="navbar__item">
+      <div v-if="isLogin" @click="showForm = ! showForm" class="navbar__item">
         <button class="button">
           <i class="icon ion-md-add"></i>
           Submit a PHOTO!
@@ -32,12 +32,25 @@
       </div>
       
     </div>
+
+    <!--インポートしたPhotoForm.vue、showFormをpropsとして渡しているので表示非表示が変わる-->
+    <PhotoForm v-model="showForm" />
   </nav>
 
 </template>
 
 <script>
+import PhotoForm from "./PhotoForm";
+
 export default {
+  components: {
+    PhotoForm
+  },
+  data() {
+    return {
+      showForm: false
+    }
+  },
   computed: {
     isLogin() {
       return this.$store.getters['auth/check']
