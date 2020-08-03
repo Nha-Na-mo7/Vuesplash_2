@@ -10,6 +10,7 @@
       <img :src="photo.url" alt="">
       <figcaption>Posted by {{ photo.owner.name }}</figcaption>
     </figure>
+    
     <div class="photo-detail__pane">
       <button class="button button--like" title="Like photo">
         <i class="icon ion-md-heart"></i>9999
@@ -21,27 +22,61 @@
       >
         <i class="icon ion-md-arrow-round-down"></i>DOWNLOAD
       </a>
+
+      <!--コメント一覧-->
       <h2 class="photo-detail__title">
         <i class="icon ion-md-chatboxes"></i>COMMENTS
       </h2>
+      <ul v-if="photo.comments.length > 0" class="photo-detail__comments">
+        <li
+            v-for="comment in photo.comments"
+            :key="comment.content"
+            class="photo-detail__commentItem"
+        >
+          <p class="photo-detail__commentBody">{{ comment.content }}</p>
+          <p class="photo-detail__commentInfo">{{ comment.author.name}}</p>
+        </li>
+      </ul>
+      <p v-else>NO COMMENTS YET...</p>
+
+
+      <!--コメントの投稿欄-->
+      <form v-if="isLogin" @submit.prevent="addComment" class="form">
+        <div v-if="commentErrors" class="errors">
+          <ul v-if="commentErrors">
+            <li v-for="msg in commentErrors.content" :key="msg">{{ msg }}</li>
+          </ul>
+        </div>
+        <textarea class="form__item" v-model="commentContent"></textarea>
+        <div class="form__button">
+          <button type="submit" class="button button--inverse">SUBMIT COMMENT</button>
+        </div>
+      </form>
     </div>
   </div>
 </template>
 
 <script>
-import { OK } from '../util'
+import { OK, CREATED, UNPROCESSABLE_ENTITY } from '../util'
 
 export default {
   props: {
     id: {
       type: String,
-      required: true
+      required: true,
     }
   },
   data () {
     return {
       photo: null,
-      fullWidth: false
+      fullWidth: false,
+      commentContent: '',
+      commentErrors: null
+    }
+  },
+  computed: {
+    isLogin() {
+      return this.$store.getters['auth/check']
     }
   },
   methods: {
@@ -54,6 +89,34 @@ export default {
       }
 
       this.photo = response.data
+    },
+    // [[[ コメントの送信 ]]]
+    async addComment () {
+      const response = await axios.post(`/api/photos/${this.id}/comments`, {
+        content: this.commentContent
+      })
+
+      // バリデーションエラー
+      if(response.status === UNPROCESSABLE_ENTITY) {
+        this.commentErrors = response.data.errors
+        return false
+      }
+
+      // 送信後はコメントを空に
+      this.commentContent = ''
+      // エラーメッセージもクリア
+      this.commentErrors = null
+
+      // その他のエラー
+      if(response.status !== CREATED) {
+        this.$store.commit('error/setCode', response.status)
+        return false
+      }
+
+      this.photo.comments = [
+          response.data,
+          ...this.photo.comments
+      ]
     }
   },
   watch: {
