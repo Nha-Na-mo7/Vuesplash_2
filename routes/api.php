@@ -33,3 +33,5 @@ Route::post('/photos', 'PhotoController@create')->name('photo.create');
 Route::get('/photos', 'PhotoController@index')->name('photo.index');
 // 写真の詳細画面
 Route::get('/photos/{id}', 'PhotoController@show')->name('photo.show');
+// コメント
+Route::post('/photos/{photo}/comments', 'PhotoController@addComment')->name('photo.comment');

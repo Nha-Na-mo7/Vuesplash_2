@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Comment;
+use App\Http\Requests\StoreComment;
 use App\Http\Requests\StorePhoto;
 use App\Photo;
 use Illuminate\Http\Request;
@@ -76,36 +78,54 @@ class PhotoController extends Controller
      * @param Photo $photo
      * @return \Illuminate\Http\Response
      */
-      public function download(Photo $photo)
-      {
-        // 写真の存在チェック
-//        if (! Storage::exists($photo->filename)) {
-//          abort(404);
-//        }
-        $filePath = 'public/photos/' . $photo->filename;
-        $mimeType = Storage::mimeType($filePath);
-        $disposition = 'attachment; filename="' . $photo->filename . '"';
-        $headers = [
-            'Content-Type' => $mimeType,
-            'Content-Disposition' => $disposition,
-        ];
-        return Storage::download($filePath, $photo->filename, $headers);
-      }
+    public function download(Photo $photo)
+    {
+      // 写真の存在チェック
+//      if (! Storage::exists($photo->filename)) {
+//        abort(404);
+//      }
+      $filePath = 'public/photos/' . $photo->filename;
+      $mimeType = Storage::mimeType($filePath);
+      $disposition = 'attachment; filename="' . $photo->filename . '"';
+      $headers = [
+          'Content-Type' => $mimeType,
+          'Content-Disposition' => $disposition,
+      ];
+      return Storage::download($filePath, $photo->filename, $headers);
+    }
+    
+    
+    /**
+     * 写真詳細
+     * @param string $id
+     * @return Photo
+     */
+    public function show(string $id)
+    {
+      //引数で受け取ったパスパラメータ"$id"を元に写真データを受け取る
+      $photo = Photo::where('id', $id)->with(['owner', 'comments.author'])->first();
       
+      //写真データが見つからなかった場合、404を返す
+      return $photo ?? abort(404);
+    }
+  
+    /**
+     * コメント投稿
+     * @param Photo $photo
+     * @param StoreComment $request
+     * @return \Illuminate\Http\Response
+     */
+    public function addComment(Photo $photo, StoreComment $request)
+    {
+      $comment = new Comment();
+      $comment->content = $request->get('content');
+      $comment->user_id = Auth::user()->id;
+      $photo->comments()->save($comment);
       
-      /**
-       * 写真詳細
-       * @param string $id
-       * @return Photo
-       */
-      public function show(string $id)
-      {
-        //引数で受け取ったパスパラメータ"$id"を元に写真データを受け取る
-        $photo = Photo::where('id', $id)->with(['owner'])->first();
-        
-        //写真データが見つからなかった場合、404を返す
-        return $photo ?? abort(404);
-      }
+      // authorリレーションをロードするためにコメントを取得しなおす
+      $new_comment = Comment::where('id', $comment->id)->with('author')->first();
       
-      
+      return response($new_comment, 201);
+    }
+    
 }
