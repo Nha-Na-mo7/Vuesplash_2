@@ -14,7 +14,7 @@ class PhotoController extends Controller
     public function __construct()
     {
       // コンストラクタで認証してしまう
-      $this->middleware('auth')->except(['index', 'download']);
+      $this->middleware('auth')->except(['index', 'download', 'show']);
     }
     
     /**
@@ -70,6 +70,7 @@ class PhotoController extends Controller
       return $photos;
     }
     
+    
     /*
      * 写真のダウンロード
      * @param Photo $photo
@@ -90,4 +91,21 @@ class PhotoController extends Controller
         ];
         return Storage::download($filePath, $photo->filename, $headers);
       }
+      
+      
+      /**
+       * 写真詳細
+       * @param string $id
+       * @return Photo
+       */
+      public function show(string $id)
+      {
+        //引数で受け取ったパスパラメータ"$id"を元に写真データを受け取る
+        $photo = Photo::where('id', $id)->with(['owner'])->first();
+        
+        //写真データが見つからなかった場合、404を返す
+        return $photo ?? abort(404);
+      }
+      
+      
 }
