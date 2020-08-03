@@ -78,16 +78,16 @@ class PhotoController extends Controller
       public function download(Photo $photo)
       {
         // 写真の存在チェック
-        if (! Storage::exists($photo->filename)) {
-          abort(404);
-        }
-  
+//        if (! Storage::exists($photo->filename)) {
+//          abort(404);
+//        }
+        $filePath = 'public/photos/' . $photo->filename;
+        $mimeType = Storage::mimeType($filePath);
         $disposition = 'attachment; filename="' . $photo->filename . '"';
         $headers = [
-            'Content-Type' => 'application/octet-stream',
+            'Content-Type' => $mimeType,
             'Content-Disposition' => $disposition,
         ];
-  
-        return response(Storage::get($photo->filename), 200, $headers);
+        return Storage::download($filePath, $photo->filename, $headers);
       }
 }

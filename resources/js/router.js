@@ -19,7 +19,12 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    component: PhotoList
+    component: PhotoList,
+    props: route => {
+      // PhotoList.vueにpageというpropsとして渡す
+      const page = route.query.page
+      return { page: /^[1-9][0-9]*$/.test(page) ? page * 1 : 1 }
+    }
   },
   {
     path: '/photos/:id',
@@ -49,6 +54,9 @@ const routes = [
 // VueRouterのインスタンスを作成する
 const router = new VueRouter({
   mode: 'history', //historyモード。mode's'にしないこと。
+  scrollBehavior () {
+    return { x: 0, y: 0}
+  },
   routes
 })
 

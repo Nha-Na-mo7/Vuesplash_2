@@ -8,8 +8,21 @@ use Illuminate\Support\Facades\Storage;
 
 class Photo extends Model
 {
-    /** プライマリーキーの型 */
+    /** プライマリキーの型 */
     protected $keyType = 'string';
+    
+    /** JSONに含める属性 */
+    protected $visible = [
+        'id', 'owner', 'url',
+    ];
+    
+    /** JSONに含める属性 */
+    protected $appends = [
+        'url',
+    ];
+    
+    /** 1ページあたりのアイテム数 */
+    protected $perPage = 15;
     
     /** IDの桁数 */
     const ID_LENGTH = 12;
@@ -27,7 +40,8 @@ class Photo extends Model
     /**
      * ランダムなID値をid属性に代入する
      */
-    private function setId() {
+    private function setId()
+    {
       $this->attributes['id'] = $this->getRandomId();
     }
     
@@ -46,13 +60,12 @@ class Photo extends Model
       
       $id = "";
       
-      for ($i = 0;$i < self::ID_LENGTH; $i++) {
+      for ($i = 0; $i < self::ID_LENGTH; $i++) {
         $id .= $characters[random_int(0, $length - 1)];
       }
+      
       return $id;
     }
-  
-    
     
     /**
      * リレーションシップ - usersテーブル
@@ -79,10 +92,4 @@ class Photo extends Model
     {
       return Storage::url($this->attributes['filename']);
     }
-    
-    /** JSONに含める属性 */
-    protected $appends = [
-        'url',
-    ];
-    
 }
