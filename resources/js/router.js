@@ -8,6 +8,7 @@ import PhotoDetail from './pages/PhotoDetail.vue'
 import Login from './pages/Login.vue'
 import store from './store'
 import SystemError from './pages/errors/System.vue'
+import NotFound from './pages/errors/NotFound.vue'
 
 // VueRouterのプラグインを使用する
 // これによって、<RouterView />コンポーネントなどを使用できるようになる。
@@ -48,6 +49,10 @@ const routes = [
   {
     path: '/500',
     component: SystemError
+  },
+  {
+    path: '*',
+    component: NotFound
   }
 ]
 
